@@ -1,9 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const tours = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../dev-data/data/tours-simple.json'))
-);
+const simpleTours = path.join(__dirname, '../dev-data/data/tours-simple.json');
+
+const tours = JSON.parse(fs.readFileSync(simpleTours));
 
 const checkId = (req, res, next, value) => {
   const serachId = +req.params.id;
@@ -15,6 +15,21 @@ const checkId = (req, res, next, value) => {
       message: `Not found tour with id: ${serachId}`,
     });
 
+  next();
+};
+
+const checkBody = (req, res, next) => {
+  console.log(req);
+  if (!req.body.name)
+    return res.status(400).json({
+      status: 'Bad request',
+      message: `Can not post tour without name property!`,
+    });
+  if (!req.body.price)
+    return res.status(400).json({
+      status: 'Bad request',
+      message: `Can not post tour without price property!`,
+    });
   next();
 };
 
@@ -77,5 +92,6 @@ module.exports = {
   updateTour,
   deleteTour,
   createTour,
-  checkId
+  checkId,
+  checkBody,
 };
